@@ -21,6 +21,7 @@ function StudentTable({ students, fetchStudents, setEditing }) {
           <th>Major</th>
           <th>GPA</th>
           <th>Class ID</th>
+          <th>Advisor</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -29,7 +30,7 @@ function StudentTable({ students, fetchStudents, setEditing }) {
 
         {students.length === 0 ? (
           <tr>
-            <td colSpan="7">No students found</td>
+            <td colSpan="8">No students found</td>
           </tr>
         ) : (
 
@@ -41,15 +42,11 @@ function StudentTable({ students, fetchStudents, setEditing }) {
               <td>{s.major}</td>
               <td>{s.gpa}</td>
               <td>{s.class_id}</td>
+              <td>{s.advisor}</td>
 
               <td>
-                <button onClick={() => setEditing(s)}>
-                  Edit
-                </button>
-
-                <button onClick={() => handleDelete(s.student_id)}>
-                  Delete
-                </button>
+                <button onClick={() => setEditing(s)}>Edit</button>
+                <button onClick={() => handleDelete(s.student_id)}>Delete</button>
               </td>
             </tr>
           ))
