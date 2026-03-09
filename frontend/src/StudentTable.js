@@ -6,11 +6,13 @@ function StudentTable({ students, fetchStudents, setEditing }) {
     await fetch(`http://127.0.0.1:8000/students/${id}`, {
       method: "DELETE"
     });
+
     fetchStudents();
   };
 
   return (
     <table border="1">
+
       <thead>
         <tr>
           <th>ID</th>
@@ -18,24 +20,42 @@ function StudentTable({ students, fetchStudents, setEditing }) {
           <th>Birth Year</th>
           <th>Major</th>
           <th>GPA</th>
+          <th>Class ID</th>
           <th>Actions</th>
         </tr>
       </thead>
 
       <tbody>
-        {students.map(s => (
-          <tr key={s.student_id}>
-            <td>{s.student_id}</td>
-            <td>{s.name}</td>
-            <td>{s.birth_year}</td>
-            <td>{s.major}</td>
-            <td>{s.gpa}</td>
-            <td>
-              <button onClick={()=>setEditing(s)}>Edit</button>
-              <button onClick={()=>handleDelete(s.student_id)}>Delete</button>
-            </td>
+
+        {students.length === 0 ? (
+          <tr>
+            <td colSpan="7">No students found</td>
           </tr>
-        ))}
+        ) : (
+
+          students.map((s) => (
+            <tr key={s.student_id}>
+              <td>{s.student_id}</td>
+              <td>{s.name}</td>
+              <td>{s.birth_year}</td>
+              <td>{s.major}</td>
+              <td>{s.gpa}</td>
+              <td>{s.class_id}</td>
+
+              <td>
+                <button onClick={() => setEditing(s)}>
+                  Edit
+                </button>
+
+                <button onClick={() => handleDelete(s.student_id)}>
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))
+
+        )}
+
       </tbody>
 
     </table>
