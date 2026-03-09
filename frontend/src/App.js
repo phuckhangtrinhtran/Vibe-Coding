@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./App.css";
 import StudentForm from "./StudentForm";
 import StudentTable from "./StudentTable";
 
@@ -18,7 +19,7 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div className="App">
       <h1>Student Management</h1>
 
       <StudentForm
@@ -32,7 +33,6 @@ function App() {
         fetchStudents={fetchStudents}
         setEditing={setEditing}
       />
-
     </div>
   );
 }
