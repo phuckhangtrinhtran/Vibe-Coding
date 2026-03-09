@@ -9,10 +9,19 @@ function App() {
   const [editing, setEditing] = useState(null);
 
   const fetchStudents = async () => {
+  try {
     const res = await fetch("http://127.0.0.1:8000/students");
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch students");
+    }
+
     const data = await res.json();
     setStudents(data);
-  };
+  } catch (error) {
+    console.error("Error loading students:", error);
+  }
+};
 
   useEffect(() => {
     fetchStudents();
