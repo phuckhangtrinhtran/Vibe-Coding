@@ -14,13 +14,13 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/students")
-def list_students(db: Session = Depends(get_db)):
-    return crud.get_students(db)
-
-@app.post("/students")
+@app.post("/students", response_model=schemas.Student)
 def add_student(student: schemas.StudentCreate, db: Session = Depends(get_db)):
     return crud.create_student(db, student)
+
+@app.get("/students", response_model=list[schemas.Student])
+def list_students(db: Session = Depends(get_db)):
+    return crud.get_students(db)
 
 @app.put("/students/{student_id}")
 def edit_student(student_id: str, student: schemas.StudentCreate, db: Session = Depends(get_db)):
