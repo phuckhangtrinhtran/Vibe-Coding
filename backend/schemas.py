@@ -30,5 +30,7 @@ class StudentCreate(StudentBase):
 
 
 class Student(StudentBase):
+    advisor: str | None = None
+
     class Config:
         from_attributes = True

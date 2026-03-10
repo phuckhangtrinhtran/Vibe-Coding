@@ -1,6 +1,6 @@
 import React from "react";
 
-function ClassTable({ classes }) {
+function ClassTable({ classes, fetchClasses, setEditingClass }) {
 
   return (
     <div>
@@ -14,6 +14,7 @@ function ClassTable({ classes }) {
             <th>Class ID</th>
             <th>Class Name</th>
             <th>Advisor</th>
+            <th>Action</th>
           </tr>
         </thead>
 
@@ -21,7 +22,7 @@ function ClassTable({ classes }) {
 
           {classes.length === 0 ? (
             <tr>
-              <td colSpan="3">No classes</td>
+              <td colSpan="4">No classes</td>
             </tr>
           ) : (
 
@@ -30,6 +31,17 @@ function ClassTable({ classes }) {
                 <td>{c.class_id}</td>
                 <td>{c.class_name}</td>
                 <td>{c.advisor}</td>
+
+                <td>
+
+                  <button
+                    onClick={() => setEditingClass(c)}
+                  >
+                    Edit
+                  </button>
+
+                </td>
+
               </tr>
             ))
 

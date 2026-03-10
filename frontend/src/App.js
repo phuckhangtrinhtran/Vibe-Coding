@@ -11,26 +11,26 @@ function App() {
   const [classes, setClasses] = useState([]);
   const [editing, setEditing] = useState(null);
   const [searchName, setSearchName] = useState("");
+  const [editingClass, setEditingClass] = useState(null);
+
+  const [statistics, setStatistics] = useState({
+    total_students: 0,
+    average_gpa: 0,
+    students_by_major: []
+  });
+
+  const [showDashboard, setShowDashboard] = useState(false);
 
   // =================
   // STUDENTS
   // =================
 
   const fetchStudents = async () => {
-    try {
 
-      const res = await fetch("http://127.0.0.1:8000/students");
+    const res = await fetch("http://127.0.0.1:8000/students");
+    const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch students");
-      }
-
-      const data = await res.json();
-      setStudents(data);
-
-    } catch (error) {
-      console.error("Error loading students:", error);
-    }
+    setStudents(data);
   };
 
   const searchStudents = async () => {
@@ -48,8 +48,16 @@ function App() {
     setStudents(data);
   };
 
-  const exportCSV = () => {
+  // =================
+  // EXPORT CSV
+  // =================
+
+  const exportStudentsCSV = () => {
     window.open("http://127.0.0.1:8000/export/csv");
+  };
+
+  const exportClassesCSV = () => {
+    window.open("http://127.0.0.1:8000/export/classes");
   };
 
   // =================
@@ -58,20 +66,23 @@ function App() {
 
   const fetchClasses = async () => {
 
-    try {
+    const res = await fetch("http://127.0.0.1:8000/classes");
+    const data = await res.json();
 
-      const res = await fetch("http://127.0.0.1:8000/classes");
+    setClasses(data);
+  };
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch classes");
-      }
 
-      const data = await res.json();
-      setClasses(data);
+  // =================
+  // STATISTICS
+  // =================
 
-    } catch (error) {
-      console.error("Error loading classes:", error);
-    }
+  const fetchStatistics = async () => {
+
+    const res = await fetch("http://127.0.0.1:8000/statistics");
+    const data = await res.json();
+
+    setStatistics(data);
   };
 
   // =================
@@ -88,7 +99,76 @@ function App() {
 
       <h1>Student Management</h1>
 
-      {/* SEARCH + EXPORT */}
+      {/* EXPORT + DASHBOARD */}
+
+      <div style={{ marginBottom: "20px" }}>
+
+        <button onClick={exportStudentsCSV}>
+          Export Students CSV
+        </button>
+
+        <button onClick={exportClassesCSV}>
+          Export Classes CSV
+        </button>
+
+        <button onClick={() => {
+          fetchStatistics();
+          setShowDashboard(true);
+        }}>
+          Show Dashboard
+        </button>
+
+      </div>
+
+      {/* DASHBOARD */}
+
+      {showDashboard && (
+
+      <div style={{ marginBottom: "30px" }}>
+
+        <h2>Statistics</h2>
+
+        <p>Total Students: {statistics.total_students}</p>
+
+        <p>
+          Average GPA: {statistics.average_gpa
+            ? statistics.average_gpa.toFixed(2)
+            : 0}
+        </p>
+
+        <h3>Students by Major</h3>
+
+        <ul>
+          {statistics.students_by_major.map((m, index) => (
+            <li key={index}>
+              {m.major} : {m.count}
+            </li>
+          ))}
+        </ul>
+
+      </div>
+
+      )}
+
+      {/* CLASS MANAGEMENT */}
+
+      <ClassForm
+        fetchClasses={fetchClasses}
+        editingClass={editingClass}
+        setEditingClass={setEditingClass}
+      />
+
+      <ClassTable
+        classes={classes}
+        fetchClasses={fetchClasses}
+        setEditingClass={setEditingClass}
+      />
+
+      {/* STUDENT MANAGEMENT */}
+
+      <h2>Student List</h2>
+
+      {/* SEARCH */}
 
       <div style={{ marginBottom: "20px" }}>
 
@@ -102,21 +182,14 @@ function App() {
           Search
         </button>
 
-        <button onClick={exportCSV}>
-          Export CSV
+        <button onClick={() => {
+          setSearchName("");
+          fetchStudents();
+        }}>
+          Reset
         </button>
 
       </div>
-
-      {/* CLASS MANAGEMENT */}
-
-      <ClassForm fetchClasses={fetchClasses} />
-
-      <ClassTable classes={classes} />
-
-      <hr style={{ margin: "40px 0" }} />
-
-      {/* STUDENT MANAGEMENT */}
 
       <StudentForm
         fetchStudents={fetchStudents}

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function ClassForm({ fetchClasses }) {
+function ClassForm({ fetchClasses, editingClass, setEditingClass }) {
 
   const [form, setForm] = useState({
     class_id: "",
@@ -8,14 +8,35 @@ function ClassForm({ fetchClasses }) {
     advisor: ""
   });
 
+  useEffect(() => {
+
+    if (editingClass) {
+      setForm(editingClass);
+    }
+
+  }, [editingClass]);
+
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
-    await fetch("http://127.0.0.1:8000/classes", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(form)
-    });
+    if (editingClass) {
+
+      await fetch(`http://127.0.0.1:8000/classes/${form.class_id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(form)
+      });
+
+    } else {
+
+      await fetch("http://127.0.0.1:8000/classes", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(form)
+      });
+
+    }
 
     fetchClasses();
 
@@ -24,16 +45,19 @@ function ClassForm({ fetchClasses }) {
       class_name: "",
       advisor: ""
     });
+
+    setEditingClass(null);
   };
 
   return (
     <form onSubmit={handleSubmit}>
 
-      <h2>Add Class</h2>
+      <h2>{editingClass ? "Edit Class" : "Add Class"}</h2>
 
       <input
         placeholder="Class ID"
         value={form.class_id}
+        disabled={editingClass}
         onChange={(e)=>setForm({...form,class_id:e.target.value})}
       />
 
@@ -50,7 +74,7 @@ function ClassForm({ fetchClasses }) {
       />
 
       <button type="submit">
-        Add Class
+        {editingClass ? "Update Class" : "Add Class"}
       </button>
 
     </form>
